@@ -3,8 +3,9 @@ package com.ie.tdd.finance;
 public class SavingsAccountYear {
 
     private int startingBalance = 0;
-    private int capitalGain = 0;
+    private int capitalGainAmount = 0;
     private int interestRate = 0;
+    private int totalWithdraw = 0;
 
     public SavingsAccountYear() {
     }
@@ -14,9 +15,9 @@ public class SavingsAccountYear {
         this.interestRate = interestRate;
     }
 
-    public SavingsAccountYear(int startingBalance, int capitalGain, int interestRate) {
+    public SavingsAccountYear(int startingBalance, int capitalGainAmount, int interestRate) {
         this.startingBalance = startingBalance;
-        this.capitalGain = capitalGain;
+        this.capitalGainAmount = capitalGainAmount;
         this.interestRate = interestRate;
     }
 
@@ -24,16 +25,26 @@ public class SavingsAccountYear {
         return startingBalance;
     }
 
+    public int startingPrincipal() {
+        return startingBalance - capitalGainAmount;
+    }
+
+    public int endingPrincipal() {
+        int result = startingPrincipal() - totalWithdraw;
+        return (result < 0) ? 0 : result;
+    }
+
     public int interestRate() {
         return interestRate;
     }
 
     public int endingBalance() {
-        return startingBalance() + (startingBalance() * interestRate / 100);
+        int modifiedStart = startingBalance - totalWithdraw;
+        return modifiedStart + (modifiedStart * interestRate / 100);
     }
 
     public void withdraw(int amount) {
-        startingBalance -= amount;
+        totalWithdraw += amount;
     }
 
     public SavingsAccountYear nextYear() {
