@@ -1,6 +1,6 @@
 Capital gain
 Get rid of the SavingsAccountYear initializer
-
+Clear up SavingsAccountYearTest
 
 
 
