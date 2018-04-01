@@ -3,9 +3,10 @@ package com.ie.tdd.finance;
 public class SavingsAccountYear {
 
     private int startingBalance = 0;
-    private int capitalGainAmount = 0;
+    private int startingPrincipal = 0;
     private int interestRate = 0;
-    private int totalWithdraw = 0;
+    private int capitalGainAmount = 0;
+    private int totalWithdrawn = 0;
 
     public SavingsAccountYear() {
     }
@@ -15,9 +16,10 @@ public class SavingsAccountYear {
         this.interestRate = interestRate;
     }
 
-    public SavingsAccountYear(int startingBalance, int capitalGainAmount, int interestRate) {
+    public SavingsAccountYear(int startingBalance, int startingPrincipal, int interestRate) {
         this.startingBalance = startingBalance;
-        this.capitalGainAmount = capitalGainAmount;
+        this.startingPrincipal = startingPrincipal;
+        this.capitalGainAmount = startingBalance - startingPrincipal;
         this.interestRate = interestRate;
     }
 
@@ -26,28 +28,41 @@ public class SavingsAccountYear {
     }
 
     public int startingPrincipal() {
-        return startingBalance - capitalGainAmount;
-    }
-
-    public int endingPrincipal() {
-        int result = startingPrincipal() - totalWithdraw;
-        return (result < 0) ? 0 : result;
+        return startingPrincipal;
     }
 
     public int interestRate() {
         return interestRate;
     }
 
+    public int totalWithdrawn() {
+        return totalWithdrawn;
+    }
+
+    public int endingPrincipal() {
+        int result = startingPrincipal() - totalWithdrawn();
+        return Math.max(0, result);
+    }
+
     public int endingBalance() {
-        int modifiedStart = startingBalance - totalWithdraw;
-        return modifiedStart + (modifiedStart * interestRate / 100);
+        int modifiedStart = startingBalance() - totalWithdrawn() - capitalGainsTaxIncurred(25);
+        return modifiedStart + (modifiedStart * interestRate() / 100);
     }
 
     public void withdraw(int amount) {
-        totalWithdraw += amount;
+        totalWithdrawn += amount;
     }
 
     public SavingsAccountYear nextYear() {
-        return new SavingsAccountYear(this.endingBalance(), interestRate);
+        return new SavingsAccountYear(this.endingBalance(), interestRate());
+    }
+
+    public int capitalGainsWithdrawn() {
+        int result = totalWithdrawn() - startingPrincipal();
+        return Math.max(0, result);
+    }
+
+    public int capitalGainsTaxIncurred(int taxRate) {
+        return capitalGainsWithdrawn() * taxRate / 100;
     }
 }
